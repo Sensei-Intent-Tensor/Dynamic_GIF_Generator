@@ -111,7 +111,7 @@ def index():
 def serve_face_gif():
     """Generate and serve animated GIF based on seed parameters"""
     seeds_param = request.args.get('seeds', 'default')
-    duration = int(request.args.get('duration', 1000))  # milliseconds per frame
+    duration = int(request.args.get('duration', 1000))
     
     if not HAS_CAIRO:
         return Response(
@@ -128,7 +128,6 @@ def serve_face_gif():
         )
     
     try:
-        # Parse seeds
         seeds = [s.strip() for s in seeds_param.split(',')]
         
         if not seeds or not seeds[0]:
@@ -138,7 +137,6 @@ def serve_face_gif():
                 mimetype='text/plain'
             )
         
-        # Generate PNG frames for each seed
         frames = []
         for seed in seeds:
             svg_content = generate_svg(seed)
@@ -150,7 +148,6 @@ def serve_face_gif():
             img = Image.open(BytesIO(png_data))
             frames.append(img)
         
-        # Create animated GIF
         output = BytesIO()
         frames[0].save(
             output,
@@ -158,7 +155,7 @@ def serve_face_gif():
             save_all=True,
             append_images=frames[1:],
             duration=duration,
-            loop=0,  # Loop forever
+            loop=0,
             optimize=True
         )
         output.seek(0)
